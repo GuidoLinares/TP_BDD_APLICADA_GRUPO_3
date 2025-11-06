@@ -1,63 +1,171 @@
-USE [TP_BASE_DE_DATOS_2025_GRUPO_3]
+use TP_BASE_DE_DATOS_2025_GRUPO_3
+go
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+PRINT '=====================================================';
+PRINT '--- 1. VERIFICACIÓN: sp_ImportarConsorcios ---';
+PRINT '=====================================================';
+--FUNCIONA
+
+-- 1.1 EJECUCIÓN
+EXEC dbo.sp_ImportarConsorcios @RutaArchivo = 'S:\Desktop\TP_BDD_APLICADA_GRUPO_3\consorcios\Consorcios.csv';
 GO
 
-SET NOCOUNT ON;
-PRINT '--- INICIO DE CARGA SECUENCIAL DE DATOS ---';
-PRINT 'Fecha y Hora: ' + CONVERT(VARCHAR, GETDATE(), 121);
-PRINT '------------------------------------------------';
+-- 1.2. CONSULTAS DE VALIDACIÓN
+SELECT 
+    'Consorcio' AS Tabla, 
+    COUNT(idconsorcio) AS Total_Cargado,
+    COUNT(DISTINCT numeroConsorcio) AS Unicidad_Numero
+FROM dbo.consorcio;
+GO
 
--- =================================================================
--- 1. DEFINIR VARIABLES DE RUTA
--- !! IMPORTANTE: Modifica estas rutas a tu entorno local !!
--- =================================================================
-DECLARE @RutaConsorcios   NVARCHAR(1000) = 'S:\Desktop\TP_BDD_APLICADA_GRUPO_3\consorcios\Consorcios.csv';
-DECLARE @RutaPersonas     NVARCHAR(1000) = 'S:\Desktop\TP_BDD_APLICADA_GRUPO_3\consorcios\Inquilino-propietarios-datos.csv';
-DECLARE @RutaPagos        NVARCHAR(1000) = 'S:\Desktop\TP_BDD_APLICADA_GRUPO_3\consorcios\pagos_consorcios.csv';
-DECLARE @RutaUF           NVARCHAR(1000) = 'S:\Desktop\TP_BDD_APLICADA_GRUPO_3\consorcios\UF por consorcio.txt';
-DECLARE @RutaServicios    NVARCHAR(1000) = 'S:\Desktop\TP_BDD_APLICADA_GRUPO_3\consorcios\Servicios.Servicios.json';
-DECLARE @RutaRelaciones   NVARCHAR(1000) = 'S:\Desktop\TP_BDD_APLICADA_GRUPO_3\consorcios\Inquilino-propietarios-UF.csv';
-DECLARE @AnoServicios     INT            = 2024; -- El año para la importación del JSON
+-- 1.3. VERIFICACIÓN DE INTEGRIDAD
+SELECT
+    CASE WHEN COUNT(*) = 5 THEN 'OK' ELSE 'ERROR: Faltan/Sobran Consorcios' END AS Estado_Conteo,
+    CASE WHEN COUNT(idconsorcio) = COUNT(DISTINCT numeroConsorcio) THEN 'OK' ELSE 'ERROR: Duplicados en numeroConsorcio' END AS Estado_Unicidad
+FROM dbo.consorcio;
 
--- =================================================================
--- 2. EJECUCIÓN GRUPO 1: Maestros Base (Sin dependencias)
--- =================================================================
 
-PRINT 'Ejecutando: 1. sp_ImportarConsorcios...';
-EXEC dbo.sp_ImportarConsorcios @RutaArchivo = @RutaConsorcios;
-PRINT '------------------------------------------------';
 
-PRINT 'Ejecutando: 2. sp_ImportaInquilinos (Carga Propietarios e Inquilinos)...';
-EXEC dbo.sp_ImportaInquilinos @RutaArchivo = @RutaPersonas;
-PRINT '------------------------------------------------';
+SELECT *
+FROM consorcio
 
-PRINT 'Ejecutando: 3. sp_ImportaPagos...';
-EXEC dbo.sp_ImportaPagos @RutaArchivo = @RutaPagos;
-PRINT '------------------------------------------------';
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
--- =================================================================
--- 3. EJECUCIÓN GRUPO 2: Maestros Dependientes
--- =================================================================
 
-PRINT 'Ejecutando: 4. sp_ImportarUnidadesFuncionales (Depende de Consorcios)...';
-EXEC dbo.sp_ImportarUnidadesFuncionales @RutaArchivo = @RutaUF;
-PRINT '------------------------------------------------';
+PRINT '=====================================================';
+PRINT '--- 2. VERIFICACIÓN: sp_ImportaInquilinos ---';
+PRINT '=====================================================';
+--NO FUNCIONA
 
-PRINT 'Ejecutando: 5. sp_importar_servicios_json (Depende de Consorcios)...';
-EXEC dbo.sp_importar_servicios_json 
-    @RutaArchivo = @RutaServicios, 
-    @AnoImportacion = @AnoServicios;
-PRINT '------------------------------------------------';
+-- 2.1 EJECUCIÓN
+EXEC dbo.sp_ImportaInquilinos @RutaArchivo = 'S:\Desktop\TP_BDD_APLICADA_GRUPO_3\consorcios\Inquilino-propietarios-datos.csv';
+GO
 
--- =================================================================
--- 4. EJECUCIÓN GRUPO 3: Tablas de Relación
--- =================================================================
+-- 2.2. CONSULTAS DE VALIDACIÓN
+SELECT 
+    'Propietarios' AS Tabla, COUNT(*) AS Total, COUNT(DISTINCT DNI) AS DNI_Unicos 
+FROM dbo.propietario
+UNION ALL
+SELECT 
+    'Inquilinos' AS Tabla, COUNT(*) AS Total, COUNT(DISTINCT DNI) AS DNI_Unicos 
+FROM dbo.inquilino;
+GO
 
-PRINT 'Ejecutando: 6. sp_ImportarRelacion_UF_Persona (Depende de Consorcios, Personas y UF)...';
-EXEC dbo.sp_ImportarRelacion_UF_Persona @RutaArchivo = @RutaRelaciones;
-PRINT '------------------------------------------------';
+-- 2.3. VERIFICACIÓN DE INTEGRIDAD (DNI y Solapamiento)
+DECLARE @TotalDNI INT = 177;
+DECLARE @DNI_Unicos_Personas INT = (SELECT COUNT(DISTINCT DNI) FROM dbo.propietario) + (SELECT COUNT(DISTINCT DNI) FROM dbo.inquilino);
 
-PRINT '--- FIN DE CARGA SECUENCIAL ---';
-SET NOCOUNT OFF;
+SELECT 
+    CASE WHEN @DNI_Unicos_Personas <= @TotalDNI THEN 'OK' ELSE 'ERROR: Solapamiento o Sobrecarga' END AS Estado_Integridad,
+    @DNI_Unicos_Personas AS DNI_Totales_Cargados;
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+PRINT '=====================================================';
+PRINT '--- 3. VERIFICACIÓN: sp_ImportaPagos ---';
+PRINT '=====================================================';
+-- FUNCIONA
+
+-- 3.1 EJECUCIÓN
+EXEC dbo.sp_ImportaPagos @RutaArchivo = 'S:\Desktop\TP_BDD_APLICADA_GRUPO_3\consorcios\pagos_consorcios.csv';
+GO
+
+-- 3.2. CONSULTAS DE VALIDACIÓN
+SELECT 
+    'Pagos' AS Tabla, 
+    COUNT(idPago) AS Total_Cargado,
+    MIN(idPago) AS Min_ID,
+    MAX(idPago) AS Max_ID
+FROM dbo.pago;
+GO
+
+-- 3.3. VERIFICACIÓN DE INTEGRIDAD
+SELECT *
+FROM dbo.pago;
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+PRINT '=====================================================';
+PRINT '--- 4. VERIFICACIÓN: sp_ImportarUnidadesFuncionales ---';
+PRINT '=====================================================';
+--CASI FUNCIONA (null uaid)
+
+
+-- 4.1 EJECUCIÓN (Depende de Consorcios)
+EXEC dbo.sp_ImportarUnidadesFuncionales @RutaArchivo = 'S:\Desktop\TP_BDD_APLICADA_GRUPO_3\consorcios\UF por consorcio.txt';
+GO
+
+-- 4.2. CONSULTAS DE VALIDACIÓN
+
+-- CONTEO Y UNICIDAD
+SELECT 
+    'Unidades Funcionales' AS Tabla, 
+    COUNT(idunidadFuncional) AS Total_Cargado,
+    COUNT(DISTINCT consorcio_idconsorcio) AS Consorcios_Asignados
+FROM dbo.unidadFuncional;
+GO
+
+-- VERIFICACIÓN DE INTEGRIDAD REFERENCIAL (Debe devolver 0)
+-- Busca UF que tengan un idconsorcio que no existe en la tabla consorcio.
+SELECT 
+    *
+FROM dbo.unidadFuncional UF
+inner join consorcio c on c.idconsorcio = consorcio_idconsorcio
+GO
+
+-- VERIFICACIÓN DE LÓGICA DE NEGOCIO (PB -> Piso 0)
+-- Verifica si la lógica de mapeo 'PB' a piso = 0 funcionó correctamente.
+SELECT 
+    'UFs en Planta Baja (Piso 0)' AS Estado, 
+    COUNT(*) AS UFs_Piso_Cero
+FROM dbo.unidadFuncional
+WHERE piso = 0;
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+PRINT '=====================================================';
+PRINT '--- 5. VERIFICACIÓN: sp_importar_servicios_json ---';
+PRINT '=====================================================';
+--FUNCIONA
+
+
+-- 5.1 EJECUCIÓN (Depende de Consorcios)
+EXEC dbo.sp_ImportarFacturas
+    @RutaArchivo = 'S:\Desktop\TP_BDD_APLICADA_GRUPO_3\consorcios\Servicios.Servicios.json'
+GO
+
+-- 5.2. CONSULTAS DE VALIDACIÓN
+
+-- CONTEO DE ENTIDADES CREADAS
+SELECT 
+    'Expensas Creadas' AS Entidad, COUNT(*) AS Total
+FROM dbo.expensa
+UNION ALL
+SELECT 
+    'Facturas (Gastos)' AS Entidad, COUNT(*) AS Total
+FROM dbo.factura
+
+
+-- 5.3. VERIFICACIÓN DE LA CARGA DE MONTO (Muestra un ejemplo de un monto procesado)
+-- Muestra algunos montos para confirmar que la lógica avanzada de conversión de moneda funcionó.
+SELECT
+    F.consorcio_nombre,
+    F.mes,
+    F.importe_tipo AS Tipo_Gasto,
+    F.importe AS Monto_Procesado
+FROM dbo.factura F
+WHERE F.importe IS NOT NULL
+ORDER BY F.importe DESC;
+
+
+
+
+
+
+
 
 
 

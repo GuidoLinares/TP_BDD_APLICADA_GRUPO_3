@@ -23,14 +23,17 @@ CREATE TABLE dbo.consorcio (
 );
 GO
 
+
 CREATE TABLE dbo.factura (
     idFactura INT IDENTITY(1,1) PRIMARY KEY,
     numero_factura VARCHAR(50),
-    fecha DATE,
-    Importe DECIMAL(12,2),
-    idExpensa INT NULL
+	consorcio_nombre VARCHAR(50),
+    mes VARCHAR(50),
+    importe DECIMAL(12,2),
+	importe_tipo VARCHAR(50),
+	es_dolar TINYINT
 );
-GO
+
 
 CREATE TABLE dbo.unidadAccesoria (
     idunidadAcc INT IDENTITY(1,1) PRIMARY KEY,
@@ -58,7 +61,7 @@ CREATE TABLE dbo.proveedor (
     idProveedor INT IDENTITY(1,1) PRIMARY KEY,
     factura_idFactura INT NULL,
     nombre VARCHAR(100),
-    CUIT VARCHAR(13),
+    CUIT VARCHAR(13), --eliminarla
     CONSTRAINT FK_proveedor_factura FOREIGN KEY (factura_idFactura) 
         REFERENCES dbo.factura(idFactura)
 );
@@ -68,7 +71,7 @@ CREATE TABLE dbo.servicio (
     idServicio INT IDENTITY(1,1) PRIMARY KEY,
     factura_idFactura INT NULL,
     nombre_empresa VARCHAR(100),
-    CUIT VARCHAR(13),
+    CUIT VARCHAR(13), --eliminarla
     CONSTRAINT FK_servicio_factura FOREIGN KEY (factura_idFactura) 
         REFERENCES dbo.factura(idFactura)
 );
