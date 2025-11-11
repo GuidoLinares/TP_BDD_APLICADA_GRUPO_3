@@ -1,7 +1,7 @@
-CREATE DATABASE TP_BASE_DE_DATOS_2025
+CREATE DATABASE [TP_BASE_DE_DATOS_2025_GRUPO_3]
 GO
 
-USE TP_BASE_DE_DATOS_2025
+USE [TP_BASE_DE_DATOS_2025_GRUPO_3]
 GO
 
 CREATE TABLE dbo.stg_Personas (
@@ -113,22 +113,31 @@ CREATE TABLE dbo.factura (
 CREATE TABLE dbo.servicio (
     idServicio INT IDENTITY(1,1) PRIMARY KEY,
     factura_idFactura INT,
-    nombre_empresa VARCHAR(100),
+    nombre_empresa VARCHAR(50),
     CUIT VARCHAR(13),
     CONSTRAINT FK_servicio_factura FOREIGN KEY (factura_idFactura) 
         REFERENCES dbo.factura(idFactura)
 );
 
-
 CREATE TABLE dbo.proveedor (
     idProveedor INT IDENTITY(1,1) PRIMARY KEY,
     factura_idFactura INT,
-    nombre VARCHAR(100),
-    CUIT VARCHAR(13),
+    tipoGasto VARCHAR(50),
+	nombreEmpresa VARCHAR(50),
+    cuenta VARCHAR(50),
+	consorcio VARCHAR(50),
     CONSTRAINT FK_proveedor_factura FOREIGN KEY (factura_idFactura) 
         REFERENCES dbo.factura(idFactura)
 );
 
+
+CREATE TABLE factura_con_proveedores (
+    factura_idFactura INT,
+    proveedor_idProveedor INT,
+    PRIMARY KEY (factura_idFactura, proveedor_idProveedor),
+    FOREIGN KEY (factura_idFactura) REFERENCES factura(idFactura),
+    FOREIGN KEY (proveedor_idProveedor) REFERENCES proveedor(idProveedor)
+);
 
 CREATE TABLE dbo.unidadAccesoria (
     idunidadAcc INT IDENTITY(1,1) PRIMARY KEY,
