@@ -1,17 +1,13 @@
-﻿USE [TP_BASE_DE_DATOS_2025_GRUPO_3]
-GO
+use TP_BDD_FINAL
+go
 
-CREATE TABLE dbo.propietario (
-    idPropietario INT IDENTITY(1,1) PRIMARY KEY, 
-    DNI VARCHAR(20) NOT NULL UNIQUE,
-    Nombre VARCHAR(100),
-    Apellido VARCHAR(100),
-    Email VARCHAR(255),
-    Telefono VARCHAR(50),
-    CBUVCVU VARCHAR(50) NULL,
-    idUnidadFuncional INT NULL
+CREATE TABLE dbo.tipoPersona (
+	idTipoPersona INT IDENTITY(1,1) PRIMARY KEY, 
+	descripcion VARCHAR(25) NOT NULL UNIQUE
 );
 GO
+
+
 
 CREATE TABLE dbo.consorcio (
     idconsorcio INT IDENTITY(1,1) PRIMARY KEY,
@@ -23,7 +19,6 @@ CREATE TABLE dbo.consorcio (
 );
 GO
 
-
 CREATE TABLE dbo.factura (
     idFactura INT IDENTITY(1,1) PRIMARY KEY,
     numero_factura VARCHAR(50),
@@ -33,7 +28,7 @@ CREATE TABLE dbo.factura (
 	importe_tipo VARCHAR(50),
 	es_dolar TINYINT
 );
-
+GO
 
 CREATE TABLE dbo.unidadAccesoria (
     idunidadAcc INT IDENTITY(1,1) PRIMARY KEY,
@@ -43,7 +38,7 @@ CREATE TABLE dbo.unidadAccesoria (
 GO
 
 CREATE TABLE dbo.pago (
-    idPago INT NOT NULL PRIMARY KEY, 
+    idPago INT IDENTITY(1,1) PRIMARY KEY, 
     fecha DATE,
     importe DECIMAL(12,2),
     cuenta_origen VARCHAR(22),
@@ -51,17 +46,10 @@ CREATE TABLE dbo.pago (
 );
 GO
 
-PRINT 'Creando tablas dependientes...';
-
--- =================================================================
--- SECCIÓN 2: TABLAS DEPENDIENTES Y DE RELACIÓN
--- =================================================================
-
 CREATE TABLE dbo.proveedor (
     idProveedor INT IDENTITY(1,1) PRIMARY KEY,
     factura_idFactura INT NULL,
     nombre VARCHAR(100),
-    CUIT VARCHAR(13), --eliminarla
     CONSTRAINT FK_proveedor_factura FOREIGN KEY (factura_idFactura) 
         REFERENCES dbo.factura(idFactura)
 );
@@ -71,7 +59,6 @@ CREATE TABLE dbo.servicio (
     idServicio INT IDENTITY(1,1) PRIMARY KEY,
     factura_idFactura INT NULL,
     nombre_empresa VARCHAR(100),
-    CUIT VARCHAR(13), --eliminarla
     CONSTRAINT FK_servicio_factura FOREIGN KEY (factura_idFactura) 
         REFERENCES dbo.factura(idFactura)
 );
@@ -88,6 +75,25 @@ CREATE TABLE dbo.unidadFuncional (
         REFERENCES dbo.unidadAccesoria(idunidadAcc),
     CONSTRAINT FK_unidadFuncional_consorcio FOREIGN KEY (consorcio_idconsorcio) 
         REFERENCES dbo.consorcio(idconsorcio)
+);
+GO
+
+CREATE TABLE dbo.persona (
+    idPersona INT IDENTITY(1,1) PRIMARY KEY, 
+    DNI VARCHAR(20) NOT NULL UNIQUE,
+    Nombre VARCHAR(100) NOT NULL,
+    Apellido VARCHAR(100) NOT NULL,
+    Email VARCHAR(255),
+    Telefono VARCHAR(50),
+    CBUVCVU VARCHAR(50),
+    idTipoPersona_FK INT NOT NULL,
+    idUnidadFuncional_FK INT NULL,
+    CONSTRAINT FK_persona_tipoPersona
+        FOREIGN KEY (idTipoPersona_FK)
+        REFERENCES dbo.tipoPersona(idTipoPersona),
+    CONSTRAINT FK_persona_unidadFuncional
+        FOREIGN KEY (idUnidadFuncional_FK)
+        REFERENCES dbo.unidadFuncional(idunidadFuncional)
 );
 GO
 
@@ -131,31 +137,6 @@ CREATE TABLE dbo.expensa (
         REFERENCES dbo.detalleExpensa(idDetalleExp)
 );
 GO
-
-CREATE TABLE dbo.inquilino (
-    idInquilino INT IDENTITY(1,1) PRIMARY KEY,
-    nombre VARCHAR(45) NOT NULL,
-    Apellido VARCHAR(45) NOT NULL,
-    DNI VARCHAR(20) NOT NULL UNIQUE,
-    email VARCHAR(255),
-    telefono VARCHAR(50),
-    CBUVCVU VARCHAR(50) NULL,
-    propietario TINYINT,
-    expensa_idExpensa INT NULL,
-    expensa_consorcio_idconsorcio INT NULL,
-    idUnidadFuncional INT NULL,
-    CONSTRAINT FK_inquilino_expensa FOREIGN KEY (expensa_idExpensa) 
-        REFERENCES dbo.expensa(idExpensa),
-    CONSTRAINT FK_inquilino_consorcio FOREIGN KEY (expensa_consorcio_idconsorcio) 
-        REFERENCES dbo.consorcio(idconsorcio)
-);
-GO
-
-PRINT 'Creando tablas de staging...';
-
--- =================================================================
--- SECCIÓN 3: TABLAS DE STAGING
--- =================================================================
 
 CREATE TABLE dbo.stg_Personas (
     [Nombre] VARCHAR(100) NULL,
@@ -214,29 +195,13 @@ CREATE TABLE dbo.stg_Inquilinos_UF (
 );
 GO
 
-PRINT 'Creando índices...';
-
--- =================================================================
--- SECCIÓN 4: ÍNDICES
--- =================================================================
-
-CREATE INDEX IX_inquilino_expensa ON dbo.inquilino(expensa_idExpensa);
 CREATE INDEX IX_expensa_consorcio ON dbo.expensa(consorcio_idconsorcio);
 CREATE INDEX IX_unidadFuncional_consorcio ON dbo.unidadFuncional(consorcio_idconsorcio);
 CREATE INDEX IX_servicio_factura ON dbo.servicio(factura_idFactura);
 CREATE INDEX IX_proveedor_factura ON dbo.proveedor(factura_idFactura);
-CREATE INDEX IX_Propietario_CBUVCVU ON dbo.propietario(CBUVCVU) WHERE CBUVCVU IS NOT NULL;
-CREATE INDEX IX_Inquilino_CBUVCVU ON dbo.inquilino(CBUVCVU) WHERE CBUVCVU IS NOT NULL;
-CREATE INDEX IX_Propietario_UF ON dbo.propietario(idUnidadFuncional) WHERE idUnidadFuncional IS NOT NULL;
-CREATE INDEX IX_Inquilino_UF ON dbo.inquilino(idUnidadFuncional) WHERE idUnidadFuncional IS NOT NULL;
+CREATE INDEX IX_persona_CBUVCVU ON dbo.persona(CBUVCVU) WHERE CBUVCVU IS NOT NULL;
+CREATE INDEX IX_persona_UF ON dbo.persona(idUnidadFuncional_FK) WHERE idUnidadFuncional_FK IS NOT NULL;
 GO
 
-PRINT '=================================================================';
-PRINT 'Base de datos recreada exitosamente!';
-PRINT '=================================================================';
-PRINT 'Tablas maestras: propietario, consorcio, factura, unidadAccesoria, pago';
-PRINT 'Tablas dependientes: proveedor, servicio, unidadFuncional, detalleExpensa, expensa, inquilino';
-PRINT 'Tablas staging: stg_Personas, stg_Proveedores, stg_Servicios, stg_UnidadFuncional, stg_Consorcios, stg_Inquilinos_UF';
-PRINT 'Índices: 9 índices creados';
-PRINT '=================================================================';
-GO
+
+
