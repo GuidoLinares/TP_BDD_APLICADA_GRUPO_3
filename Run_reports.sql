@@ -4,7 +4,7 @@
  Base de Datos: [TP_BDD_FINAL]
 ================================================================================
 */
-USE [TP_BDD_FINAL]
+USE TP_BBDDA
 GO
 
 -- ==============================================================================
@@ -80,13 +80,16 @@ EXEC sp_Reporte_3_RecaudacionPorTipoDetallado @Anio = 2025;
 GO
 
 -- REPORTE 4: [Pendiente]
-PRINT 'REPORTE 4: [Pendiente de implementación]';
--- EXEC sp_Reporte_4 @Parametro = valor;
+PRINT 'REPORTE 4: 5 meses de mayores gastos e ingresos';
+EXEC dbo.reporte_4_gastos_ingresos
+    @IdConsorcio = 1,
+    @AnioDesde = 2023,
+    @AnioHasta = 2024;
 GO
 
 -- REPORTE 5: [Pendiente]
 PRINT 'REPORTE 5: [Pendiente de implementación]';
--- EXEC sp_Reporte_5 @Parametro = valor;
+EXEC dbo.reporte_5_morosidad
 GO
 
 -- REPORTE 6: [Pendiente]
