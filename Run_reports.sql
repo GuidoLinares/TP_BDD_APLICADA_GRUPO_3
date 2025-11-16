@@ -89,7 +89,7 @@ GO
 
 -- REPORTE 5: [Pendiente]
 PRINT 'REPORTE 5: [Pendiente de implementación]';
--- EXEC sp_Reporte_5 @Parametro = valor;
+EXEC dbo.reporte_5_morosidad
 GO
 
 -- REPORTE 6: [Pendiente]
