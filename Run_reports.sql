@@ -1,21 +1,21 @@
 ﻿/*
 ================================================================================
  SCRIPT DE EJECUCIÓN: CARGAS Y REPORTES
- Base de Datos: [TP_BDD_FINAL]
+ Base de Datos: [TP_BASES_DE_DATOS_APLICADA_GRUPO_3]
 ================================================================================
 */
-USE TP_BBDDA
+USE TP_BASES_DE_DATOS_APLICADA_GRUPO_3
 GO
 
 -- ==============================================================================
 -- CONFIGURAR RUTAS DE ARCHIVOS
 -- ==============================================================================
-DECLARE @RutaConsorcios   NVARCHAR(1000) = 'S:\Desktop\TP_BDD_APLICADA_GRUPO_3\consorcios\Consorcios.csv';
-DECLARE @RutaPersonas     NVARCHAR(1000) = 'S:\Desktop\TP_BDD_APLICADA_GRUPO_3\consorcios\Inquilino-propietarios-datos.csv';
-DECLARE @RutaUFs          NVARCHAR(1000) = 'S:\Desktop\TP_BDD_APLICADA_GRUPO_3\consorcios\UF por consorcio.txt';
-DECLARE @RutaRelaciones   NVARCHAR(1000) = 'S:\Desktop\TP_BDD_APLICADA_GRUPO_3\consorcios\Inquilino-propietarios-UF.csv';
-DECLARE @RutaPagos        NVARCHAR(1000) = 'S:\Desktop\TP_BDD_APLICADA_GRUPO_3\consorcios\pagos_consorcios.csv';
-DECLARE @RutaServicios    NVARCHAR(1000) = 'S:\Desktop\TP_BDD_APLICADA_GRUPO_3\consorcios\Servicios.Servicios.json';
+DECLARE @RutaConsorcios   NVARCHAR(1000) = 'S:\Desktop\TP_BDD_APLICADA_GRUPO_3\ARCHIVOS_FUENTE\Consorcios.csv';
+DECLARE @RutaPersonas     NVARCHAR(1000) = 'S:\Desktop\TP_BDD_APLICADA_GRUPO_3\ARCHIVOS_FUENTE\Inquilino-propietarios-datos.csv';
+DECLARE @RutaUFs          NVARCHAR(1000) = 'S:\Desktop\TP_BDD_APLICADA_GRUPO_3\ARCHIVOS_FUENTE\UF por consorcio.txt';
+DECLARE @RutaRelaciones   NVARCHAR(1000) = 'S:\Desktop\TP_BDD_APLICADA_GRUPO_3\ARCHIVOS_FUENTE\Inquilino-propietarios-UF.csv';
+DECLARE @RutaPagos        NVARCHAR(1000) = 'S:\Desktop\TP_BDD_APLICADA_GRUPO_3\ARCHIVOS_FUENTE\pagos_consorcios.csv';
+DECLARE @RutaServicios    NVARCHAR(1000) = 'S:\Desktop\TP_BDD_APLICADA_GRUPO_3\ARCHIVOS_FUENTE\Servicios.Servicios.json';
 
 -- ==============================================================================
 -- 0. POBLACIÓN DE TABLA tipoPersona
@@ -59,8 +59,8 @@ PRINT 'REPORTE 1: Flujo de Caja Semanal';
 EXEC sp_Reporte_6_1_FlujoCajaSemanal;
 
 EXEC sp_Reporte_6_1_FlujoCajaSemanal
-    @FechaInicio = '2025-01-01',
-    @FechaFin = '2025-03-31',
+    @FechaInicio = NULL,
+    @FechaFin = NULL,
     @ConsorcioNombre = 'Azcuenaga';
 GO
 
@@ -79,17 +79,14 @@ PRINT 'REPORTE 3: Recaudación Detallada por Tipo de Gasto';
 EXEC sp_Reporte_3_RecaudacionPorTipoDetallado @Anio = 2025;
 GO
 
--- REPORTE 4: [Pendiente]
-PRINT 'REPORTE 4: 5 meses de mayores gastos e ingresos';
-EXEC dbo.reporte_4_gastos_ingresos
-    @IdConsorcio = 1,
-    @AnioDesde = 2023,
-    @AnioHasta = 2024;
+-- REPORTE 4: sp_Reporte_4_GastosIngresos
+PRINT 'REPORTE 4: Gastos e Ingresos por Mes';
+EXEC sp_Reporte_4_GastosIngresos @AnioDesde = 2025, @AnioHasta = 2025;
 GO
 
--- REPORTE 5: [Pendiente]
-PRINT 'REPORTE 5: [Pendiente de implementación]';
-EXEC dbo.reporte_5_morosidad
+-- REPORTE 5: sp_Reporte_5_Morosidad
+PRINT 'REPORTE 5: Propietarios con Morosidad';
+EXEC sp_Reporte_5_Morosidad;
 GO
 
 -- REPORTE 6: [Pendiente]
