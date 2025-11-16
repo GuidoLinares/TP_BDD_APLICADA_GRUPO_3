@@ -36,7 +36,7 @@ FROM consorcio
 PRINT '=====================================================';
 PRINT '--- 2. VERIFICACIÓN: sp_ImportaInquilinos ---';
 PRINT '=====================================================';
---NO FUNCIONA
+-- FUNCIONA
 
 -- 2.1 EJECUCIÓN
 EXEC dbo.sp_ImportaInquilinos @RutaArchivo = 'S:\Desktop\TP_BDD_APLICADA_GRUPO_3\consorcios\Inquilino-propietarios-datos.csv';
@@ -90,7 +90,7 @@ FROM dbo.pago;
 PRINT '=====================================================';
 PRINT '--- 4. VERIFICACIÓN: sp_ImportarUnidadesFuncionales ---';
 PRINT '=====================================================';
---CASI FUNCIONA (null uaid)
+-- FUNCIONA 
 
 
 -- 4.1 EJECUCIÓN (Depende de Consorcios)
