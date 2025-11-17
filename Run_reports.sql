@@ -92,9 +92,12 @@ PRINT 'REPORTE 5: [Pendiente de implementación]';
 EXEC dbo.reporte_5_morosidad
 GO
 
--- REPORTE 6: [Pendiente]
-PRINT 'REPORTE 6: [Pendiente de implementación]';
--- EXEC sp_Reporte_6 @Parametro = valor;
+-- REPORTE 6:
+PRINT 'REPORTE 6:';
+EXEC sp_Reporte_6_dias_entre_pagos
+    @ConsorcioId = 1,
+    @FechaDesde = '2025-01-01',
+    @FechaHasta = '2025-11-01'
 GO
 
 PRINT '--- REPORTES FINALIZADOS ---';
