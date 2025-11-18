@@ -82,18 +82,3 @@ grant execute on [dbo].[sp_ImportaPagos] to Administrativo_Bancario
 deny execute on [dbo].[sp_ImportaPagos] to Administrativo_Operativo
 deny execute on [dbo].[sp_ImportaPagos] to Sistemas
 
-
-
---CIFRADO
-
-ALTER TABLE dbo.persona 
-    ADD CVU_CBUcifradoclave varbinary(256);
-GO
-
-DECLARE @clavecifrado nvarchar(128);
-SET @clavecifrado = 'EstaEsUnaClave';
-
-
-UPDATE dbo.persona
-SET CVU_CBUcifradoclave = EncryptByPassPhrase (@clavecifrado,CBUVCVU);
-GO

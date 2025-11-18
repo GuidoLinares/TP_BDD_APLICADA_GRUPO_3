@@ -103,3 +103,26 @@ GO
 
 PRINT '--- REPORTES FINALIZADOS ---';
 GO
+
+
+PRINT '--- COMIENZO DE CIFRADO ---';
+GO
+
+
+--CIFRADO
+
+ALTER TABLE dbo.persona 
+    ADD CVU_CBUcifradoclave varbinary(256);
+GO
+
+DECLARE @clavecifrado nvarchar(128);
+SET @clavecifrado = 'EstaEsUnaClave';
+
+
+UPDATE dbo.persona
+SET CVU_CBUcifradoclave = EncryptByPassPhrase (@clavecifrado,CBUVCVU);
+GO
+
+
+PRINT '--- CIFRADO FINALIZADO ---';
+GO
