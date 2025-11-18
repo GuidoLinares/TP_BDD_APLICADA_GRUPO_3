@@ -1,4 +1,4 @@
-USE TP_BBDDA
+USE [TP_BDD_FINAL]
 GO
 
 CREATE OR ALTER PROCEDURE [dbo].[reporte_4_gastos_ingresos]

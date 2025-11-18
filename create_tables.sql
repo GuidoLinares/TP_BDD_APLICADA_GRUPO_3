@@ -1,4 +1,4 @@
-use TP_BDD_FINAL
+use [TP_BDD_FINAL]
 go
 
 CREATE TABLE dbo.tipoPersona (

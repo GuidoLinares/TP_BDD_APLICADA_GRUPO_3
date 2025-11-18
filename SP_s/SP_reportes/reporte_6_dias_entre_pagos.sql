@@ -1,4 +1,4 @@
-USE TP_BDD_FINAL
+USE [TP_BDD_FINAL]
 GO
 
 CREATE OR ALTER PROCEDURE sp_Reporte_6_dias_entre_pagos

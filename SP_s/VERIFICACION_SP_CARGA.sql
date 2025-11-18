@@ -1,4 +1,4 @@
-USE TP_BDD_FINAL
+USE [TP_BDD_FINAL]
 GO
 
 -- 1. VERIFICAR CONSORCIOS (sp_ImportarConsorcios)

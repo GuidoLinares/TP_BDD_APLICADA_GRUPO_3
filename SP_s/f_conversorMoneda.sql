@@ -1,4 +1,4 @@
-USE TP_BDD_FINAL
+USE [TP_BDD_FINAL]
 GO
 
 CREATE OR ALTER FUNCTION dbo.conversorMoneda(@importe VARCHAR(50))

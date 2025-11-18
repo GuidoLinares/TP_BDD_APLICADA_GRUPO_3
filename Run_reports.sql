@@ -4,7 +4,7 @@
  Base de Datos: [TP_BDD_FINAL]
 ================================================================================
 */
-USE TP_BBDDA
+USE [TP_BDD_FINAL]
 GO
 
 -- ==============================================================================
@@ -17,6 +17,7 @@ DECLARE @RutaRelaciones   NVARCHAR(1000) = 'S:\Desktop\TP_BDD_APLICADA_GRUPO_3\c
 DECLARE @RutaPagos        NVARCHAR(1000) = 'S:\Desktop\TP_BDD_APLICADA_GRUPO_3\consorcios\pagos_consorcios.csv';
 DECLARE @RutaServicios    NVARCHAR(1000) = 'S:\Desktop\TP_BDD_APLICADA_GRUPO_3\consorcios\Servicios.Servicios.json';
 
+
 -- ==============================================================================
 -- 0. POBLACIÓN DE TABLA tipoPersona
 -- ==============================================================================
@@ -25,7 +26,7 @@ IF NOT EXISTS (SELECT 1 FROM dbo.tipoPersona WHERE descripcion = 'PROPIETARIO')
 
 IF NOT EXISTS (SELECT 1 FROM dbo.tipoPersona WHERE descripcion = 'INQUILINO')
     INSERT INTO dbo.tipoPersona (descripcion) VALUES ('INQUILINO');
-GO
+
 
 -- ==============================================================================
 -- 1. PROCESO DE CARGAS (ETL)
@@ -92,9 +93,12 @@ PRINT 'REPORTE 5: [Pendiente de implementación]';
 EXEC dbo.reporte_5_morosidad
 GO
 
--- REPORTE 6: [Pendiente]
-PRINT 'REPORTE 6: [Pendiente de implementación]';
--- EXEC sp_Reporte_6 @Parametro = valor;
+-- REPORTE 6:
+PRINT 'REPORTE 6:';
+EXEC sp_Reporte_6_dias_entre_pagos
+    @ConsorcioId = 1,
+    @FechaDesde = '2025-01-01',
+    @FechaHasta = '2025-11-01'
 GO
 
 PRINT '--- REPORTES FINALIZADOS ---';

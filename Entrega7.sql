@@ -3,35 +3,34 @@ GO
 
 create login admingeneral
 with password = 'Admin01',
-CHECK_EXPIRATION = OFF;
+CHECK_POLICY = ON;
 
 create user Administrativo_General for login admingeneral;
 
 
 create login adminbancario
 with password = 'Admin02',
-CHECK_EXPIRATION = OFF;
+CHECK_POLICY = ON;
 
 create user Administrativo_Bancario for login adminbancario;
 
 create login adminoperativo
 with password = 'Admin03',
-CHECK_EXPIRATION = OFF;
+CHECK_POLICY = ON;
 
 create user Administrativo_Operativo for login adminoperativo;
 
 create login sistemas
 with password = 'Admin00',
-CHECK_EXPIRATION = OFF;
+CHECK_POLICY = ON;
 
 create user Sistemas for login sistemas;
 
 
-alter server role Administrativo_General add member admingeneral
-alter server role Administrativo_Bancario add member adminbancario
-alter server role Administrativo_Operativo add member adminoperativo
-
-alter server role Sistemas add member sistemas
+--alter server role Administrativo_General add member admingeneral
+--alter server role Administrativo_Bancario add member adminbancario
+--alter server role Administrativo_Operativo add member adminoperativo
+--alter server role Sistemas add member sistemas
 
 
 grant execute on [dbo].[sp_Reporte_6_1_FlujoCajaSemanal] to Administrativo_General
@@ -59,6 +58,11 @@ grant execute on [dbo].[reporte_5_morosidad] to Administrativo_Bancario
 grant execute on [dbo].[reporte_5_morosidad] to Administrativo_Operativo
 grant execute on [dbo].[reporte_5_morosidad] to Sistemas
 
+grant execute on [dbo].[sp_Reporte_6_dias_entre_pagos] to Administrativo_General
+grant execute on [dbo].[sp_Reporte_6_dias_entre_pagos] to Administrativo_Bancario
+grant execute on [dbo].[sp_Reporte_6_dias_entre_pagos] to Administrativo_Operativo
+grant execute on [dbo].[sp_Reporte_6_dias_entre_pagos] to Sistemas
+
 --acá pongo los dos SP relacionados a unidades funcionales por las dudas
 
 grant execute on [dbo].[sp_ImportarUnidadesFuncionales] to Administrativo_General
@@ -78,3 +82,18 @@ grant execute on [dbo].[sp_ImportaPagos] to Administrativo_Bancario
 deny execute on [dbo].[sp_ImportaPagos] to Administrativo_Operativo
 deny execute on [dbo].[sp_ImportaPagos] to Sistemas
 
+
+
+--CIFRADO
+
+ALTER TABLE dbo.persona 
+    ADD CVU_CBUcifradoclave varbinary(256);
+GO
+
+DECLARE @clavecifrado nvarchar(128);
+SET @clavecifrado = 'EstaEsUnaClave';
+
+
+UPDATE dbo.persona
+SET CVU_CBUcifradoclave = EncryptByPassPhrase (@clavecifrado,CBUVCVU);
+GO
