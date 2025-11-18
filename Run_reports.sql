@@ -11,11 +11,11 @@ GO
 -- CONFIGURAR RUTAS DE ARCHIVOS
 -- ==============================================================================
 DECLARE @RutaConsorcios   NVARCHAR(1000) = 'S:\Desktop\TP_BDD_APLICADA_GRUPO_3\consorcios\Consorcios.csv';
-DECLARE @RutaPersonas     NVARCHAR(1000) = 'S:\Desktop\TP_BDD_APLICADA_GRUPO_3\consorcios\Inquilino-propietarios-datos.csv';
-DECLARE @RutaUFs          NVARCHAR(1000) = 'S:\Desktop\TP_BDD_APLICADA_GRUPO_3\consorcios\UF por consorcio.txt';
-DECLARE @RutaRelaciones   NVARCHAR(1000) = 'S:\Desktop\TP_BDD_APLICADA_GRUPO_3\consorcios\Inquilino-propietarios-UF.csv';
-DECLARE @RutaPagos        NVARCHAR(1000) = 'S:\Desktop\TP_BDD_APLICADA_GRUPO_3\consorcios\pagos_consorcios.csv';
-DECLARE @RutaServicios    NVARCHAR(1000) = 'S:\Desktop\TP_BDD_APLICADA_GRUPO_3\consorcios\Servicios.Servicios.json';
+DECLARE @RutaPersonas     NVARCHAR(1000) = 'S:\Desktop\consorcios\Inquilino-propietarios-datos.csv';
+DECLARE @RutaUFs          NVARCHAR(1000) = 'S:\Desktop\consorcios\UF por consorcio.txt';
+DECLARE @RutaRelaciones   NVARCHAR(1000) = 'S:\Desktop\consorcios\Inquilino-propietarios-UF.csv';
+DECLARE @RutaPagos        NVARCHAR(1000) = 'S:\Desktop\consorcios\pagos_consorcios.csv';
+DECLARE @RutaServicios    NVARCHAR(1000) = 'S:\Desktop\consorcios\Servicios.Servicios.json';
 
 
 -- ==============================================================================
@@ -110,10 +110,6 @@ GO
 
 
 --CIFRADO
-
-ALTER TABLE dbo.persona 
-    ADD CVU_CBUcifradoclave varbinary(256);
-GO
 
 DECLARE @clavecifrado nvarchar(128);
 SET @clavecifrado = 'EstaEsUnaClave';

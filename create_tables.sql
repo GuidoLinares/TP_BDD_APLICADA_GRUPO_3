@@ -86,6 +86,7 @@ CREATE TABLE dbo.persona (
     Email VARCHAR(255),
     Telefono VARCHAR(50),
     CBUVCVU VARCHAR(50),
+    CVU_CBUcifradoclave varbinary(256),
     idTipoPersona_FK INT NOT NULL,
     idUnidadFuncional_FK INT NULL,
     CONSTRAINT FK_persona_tipoPersona

@@ -63,17 +63,12 @@ grant execute on [dbo].[sp_Reporte_6_dias_entre_pagos] to Administrativo_Bancari
 grant execute on [dbo].[sp_Reporte_6_dias_entre_pagos] to Administrativo_Operativo
 grant execute on [dbo].[sp_Reporte_6_dias_entre_pagos] to Sistemas
 
---acá pongo los dos SP relacionados a unidades funcionales por las dudas
+--Unidades funcionales
 
-grant execute on [dbo].[sp_ImportarUnidadesFuncionales] to Administrativo_General
-deny execute on [dbo].[sp_ImportarUnidadesFuncionales] to Administrativo_Bancario
-grant execute on [dbo].[sp_ImportarUnidadesFuncionales] to Administrativo_Operativo
-deny execute on [dbo].[sp_ImportarUnidadesFuncionales] to Sistemas
-
-grant execute on [dbo].[sp_ImportaRelacionUF_Personas] to Administrativo_General
-deny execute on [dbo].[sp_ImportaRelacionUF_Personas] to Administrativo_Bancario
-grant execute on [dbo].[sp_ImportaRelacionUF_Personas] to Administrativo_Operativo
-deny execute on [dbo].[sp_ImportaRelacionUF_Personas] to Sistemas
+grant control on dbo.unidadFuncional to Administrativo_General
+deny control on dbo.unidadFuncional to Administrativo_Bancario
+grant control on dbo.unidadFuncional to Administrativo_Operativo
+deny control on dbo.unidadFuncional to Sistemas
 
 -- tengo entendido que este es el que se vincula a la información bancaria, puede que me equivoque
 
@@ -81,4 +76,6 @@ deny execute on [dbo].[sp_ImportaPagos] to Administrativo_General
 grant execute on [dbo].[sp_ImportaPagos] to Administrativo_Bancario
 deny execute on [dbo].[sp_ImportaPagos] to Administrativo_Operativo
 deny execute on [dbo].[sp_ImportaPagos] to Sistemas
+
+
 
