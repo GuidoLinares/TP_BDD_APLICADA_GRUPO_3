@@ -1,4 +1,4 @@
-USE TP_BASES_DE_DATOS_APLICADA_GRUPO_3
+USE ENTREGA_FINAL_BDD_GRUPO_3
 GO
 
 -- 1. VERIFICAR CONSORCIOS (sp_ImportarConsorcios)
@@ -170,7 +170,18 @@ SELECT
 FROM dbo.expensa;
 
 
--- 7. RESUMEN GENERAL
+
+PRINT '';
+PRINT '========================================';
+PRINT '7. VERIFICACIÓN DE PROVEEDORES ';
+PRINT '========================================';
+select*
+from proveedor 
+
+
+
+
+-- 8. RESUMEN GENERAL
 -- ============================================================================
 PRINT '';
 PRINT '========================================';
@@ -194,3 +205,5 @@ SELECT 'Servicios', COUNT(*) FROM dbo.servicio
 UNION ALL
 SELECT 'Expensas', COUNT(*) FROM dbo.expensa
 ORDER BY Entidad;
+
+

@@ -1,4 +1,4 @@
-use TP_BDD_FINAL
+use ENTREGA_FINAL_BDD_GRUPO_3
 go
 
 CREATE TABLE dbo.tipoPersona (
@@ -46,14 +46,18 @@ CREATE TABLE dbo.pago (
 );
 GO
 
+
 CREATE TABLE dbo.proveedor (
     idProveedor INT IDENTITY(1,1) PRIMARY KEY,
-    factura_idFactura INT NULL,
-    nombre VARCHAR(100),
+    factura_idFactura INT,
+    tipoGasto VARCHAR(50),
+	nombreEmpresa VARCHAR(50),
+    cuenta VARCHAR(50),
+	consorcio VARCHAR(50),
     CONSTRAINT FK_proveedor_factura FOREIGN KEY (factura_idFactura) 
         REFERENCES dbo.factura(idFactura)
 );
-GO
+
 
 CREATE TABLE dbo.servicio (
     idServicio INT IDENTITY(1,1) PRIMARY KEY,

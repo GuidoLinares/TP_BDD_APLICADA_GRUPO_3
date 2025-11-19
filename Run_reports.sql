@@ -4,7 +4,7 @@
  Base de Datos: [TP_BASES_DE_DATOS_APLICADA_GRUPO_3]
 ================================================================================
 */
-USE TP_BASES_DE_DATOS_APLICADA_GRUPO_3
+USE ENTREGA_FINAL_BDD_GRUPO_3
 GO
 
 -- ==============================================================================
@@ -33,12 +33,14 @@ GO
 PRINT '--- INICIANDO CARGAS ETL ---';
 
 BEGIN TRY
-    EXEC sp_ImportarConsorcios @RutaArchivo = @RutaConsorcios;
-    EXEC sp_ImportaInquilinos @RutaArchivo = @RutaPersonas;
-    EXEC sp_ImportarUnidadesFuncionales @RutaArchivo = @RutaUFs;
-    EXEC sp_ImportaRelacionUF_Personas @RutaArchivo = @RutaRelaciones;
-    EXEC sp_ImportaPagos @RutaArchivo = @RutaPagos;
-    EXEC sp_importar_servicios_json @RutaArchivo = @RutaServicios, @AnoImportacion = 2025;
+    EXEC sp_ImportarConsorcios @RutaArchivo = 'S:\Desktop\TP_BDD_APLICADA_GRUPO_3\ARCHIVOS_FUENTE\Consorcios.csv';
+    EXEC sp_ImportaInquilinos @RutaArchivo = 'S:\Desktop\TP_BDD_APLICADA_GRUPO_3\ARCHIVOS_FUENTE\Inquilino-propietarios-datos.csv';
+    EXEC sp_ImportarUnidadesFuncionales @RutaArchivo = 'S:\Desktop\TP_BDD_APLICADA_GRUPO_3\ARCHIVOS_FUENTE\UF por consorcio.txt';
+    EXEC sp_ImportaRelacionUF_Personas @RutaArchivo = 'S:\Desktop\TP_BDD_APLICADA_GRUPO_3\ARCHIVOS_FUENTE\Inquilino-propietarios-UF.csv';
+    EXEC sp_ImportaPagos @RutaArchivo = 'S:\Desktop\TP_BDD_APLICADA_GRUPO_3\ARCHIVOS_FUENTE\pagos_consorcios.csv';
+    EXEC sp_importar_servicios_json @RutaArchivo = 'S:\Desktop\TP_BDD_APLICADA_GRUPO_3\ARCHIVOS_FUENTE\Servicios.Servicios.json', @AnoImportacion = 2025;
+    EXEC dbo.sp_ImportaProveedores @RutaArchivo = 'S:\Desktop\TP_BDD_APLICADA_GRUPO_3\ARCHIVOS_FUENTE\Proveedores.csv';
+
 
     PRINT '--- CARGAS COMPLETADAS EXITOSAMENTE ---';
 END TRY
@@ -81,18 +83,45 @@ GO
 
 -- REPORTE 4: sp_Reporte_4_GastosIngresos
 PRINT 'REPORTE 4: Gastos e Ingresos por Mes';
-EXEC sp_Reporte_4_GastosIngresos @AnioDesde = 2025, @AnioHasta = 2025;
-GO
+EXEC [sp_Reporte_4_GastosIngresos] @AnioDesde = 2025, @AnioHasta = 2025;
 
--- REPORTE 5: sp_Reporte_5_Morosidad
+
+
+-- REPORTE 5: sp_Reporte_5_Morosidad XML
 PRINT 'REPORTE 5: Propietarios con Morosidad';
 EXEC sp_Reporte_5_Morosidad;
 GO
 
--- REPORTE 6: [Pendiente]
+-- REPORTE 6: DIAS ENTRE PAGOS XML
 PRINT 'REPORTE 6: [Pendiente de implementación]';
--- EXEC sp_Reporte_6 @Parametro = valor;
+ EXEC sp_Reporte_6_dias_entre_pagos 
+    @ConsorcioId = 1,
+    @FechaDesde  = '2025-01-01',
+    @FechaHasta  = '2025-11-11'
 GO
+
 
 PRINT '--- REPORTES FINALIZADOS ---';
 GO
+
+
+--CIFRADO
+
+ALTER TABLE dbo.persona 
+ADD CVU_CBUcifradoclave varbinary(256);
+GO
+
+DECLARE @clavecifrado nvarchar(128);
+SET @clavecifrado = 'EstaEsUnaClave';
+
+
+UPDATE dbo.persona
+SET CVU_CBUcifradoclave = EncryptByPassPhrase (@clavecifrado,CBUVCVU);
+GO
+
+
+PRINT '--- CIFRADO FINALIZADO ---';
+GO
+
+
+
